@@ -9,7 +9,7 @@ function(input, output, session) {
       cohensd <- input$d  # set true effect size
       n <- input$n # sample size in each group
       
-      nSims <- 1000 # number of simulated experiments
+      nSims <- 10000 # number of simulated experiments
       p <- numeric(nSims) # set up empty variable to store all simulated p-values
       
       for(i in 1:nSims){
@@ -28,7 +28,7 @@ function(input, output, session) {
       
       hist(p, breaks = 20, ylab = "number of p-values", border = FALSE, 
           main = paste("p-value distribution with", 
-              round(empirical_power * 100, digits = 2), "% power"), 
+              round(empirical_power * 100, digits = 0), "% power"), 
           xlim = c(0, 1), ylim = c(0, nSims), col = "steelblue")
       
       abline(h = nSims / 20, lty = 2)

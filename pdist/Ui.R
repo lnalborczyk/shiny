@@ -13,7 +13,7 @@ fluidPage(
     ),
 
     mainPanel(
-      plotOutput("Plot"), withMathJax(helpText('distribution of 1000 p-values for an independant-sample t-test, as a function of effect size (Cohen\'s d) and sample size'))
+      plotOutput("Plot"), withMathJax(helpText('distribution of p-values for an independant-samples t-test, as a function of effect size (Cohen\'s d) and sample size'))
     )
 
   )
