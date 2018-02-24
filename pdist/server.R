@@ -36,7 +36,7 @@ function(input, output, session) {
                   "p-value distribution for d = ", cohensd, " and n = ", n,
                   "\npower = ", round(empirical_power, digits = 2),
                   " (at alpha = ", alpha, ")") )
-      
+
   })
   
 }
