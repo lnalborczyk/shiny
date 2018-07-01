@@ -1,0 +1,10 @@
+name: corroboration
+title:
+username:
+account: barelysignificant
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 371258
+bundleId: 1459554
+url: https://barelysignificant.shinyapps.io/corroboration/
+when: 1530469977.95213
