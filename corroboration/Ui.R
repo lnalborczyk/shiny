@@ -51,11 +51,7 @@ shinyUI(
                 h4("Description"),
                 p("The app draws a sample of a random variable y from a Gaussian
                     distribution, and illustrates how theory strength and predictive accuracy
-                    jointly determine a corroboration index."),
-                #br(),
-                h4("Details"),
-                p("...")
-                
+                    jointly determine a corroboration index.")
                 )
             )
         )

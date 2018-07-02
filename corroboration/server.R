@@ -15,10 +15,7 @@ shinyServer(function(input, output) {
         dat_min <- min(y) - 0.2 * sd(y)
         dat_max <- max(y) + 0.2 * sd(y)
         
-        xmin <- min(dat_min, qnorm(0.0001, mu, se) )
-        xmax <- max(dat_max, qnorm(0.9999, mu, se) )
-        
-        return(list(y = y, xmin = xmin, xmax = xmax) )
+        return(list(y = y) )
         
         }, ignoreNULL = FALSE, ignoreInit = FALSE)
     
@@ -40,36 +37,18 @@ shinyServer(function(input, output) {
         spielraum <- c(input$spielraum[1], input$spielraum[2])
         
         # update x-axis limits
-        
-        lim_low <- NULL
-        lim_upp <- NULL
-        xmin <- data_sample$xmin
-        xmax <- data_sample$xmax
+        xmin <- spielraum[1]
+        xmax <- spielraum[2]
         
         # sample mean and standard error
         mu_data <- mean(y)
         se_data <- sd(y) / sqrt(length(y) )
         
-        # sequence of x-values for generating probability distributions
-        x <- seq(xmin, xmax, length.out = 400)
-        lik <- dnorm(x, mu_data, se_data)
-
-        # frequentist confidence intervals
-        ci_low <- qnorm(0.025, mu_data, se_data)
-        ci_upp <- qnorm(0.975, mu_data, se_data)
-        
-        # arrange dfs for prior, likelihood
-        df_lik <- data.frame(x, type = 'lik', val = lik)
-
-        df <- df_lik
-        df$type <- factor(df$type, levels = c('lik'), labels = c('Likelihood') )
-        
-        # dfs for confidence intervals, sample data, and population mean
-        fc <- 0.12  # factor for positioning CIs, sample data, and pop mean
-        
-        df_ci <- data.frame(x = mu_data, xmin = ci_low, xmax = ci_upp, y = -1 * fc)
+        # factor for positioning CIs, sample data, and pop mean
+        fc <- 0.12
         df_sd <- data.frame(x = y, y = -2 * fc)
 
+        # creating a dataframe for subsequent plotting
         df_tolerance <- data.frame(xmin = tolerance[1], xmax = tolerance[2], y = fc)
         
         ########################################################################
@@ -85,7 +64,7 @@ shinyServer(function(input, output) {
         
         if (mu_data < tolerance[2] & mu_data > tolerance[1]) {
             
-            deviation <- 0
+            deviation <- 0 # set deviation to zero if sample mean is in the predicted interval
             
         } else if (mu_data < tolerance[1]) {
             
@@ -103,17 +82,15 @@ shinyServer(function(input, output) {
         ci <- closeness * intolerance # corroboration index
         
         #############################################
-        # plot settings
+        # plotting
         ###########################
         
-        size_labs <- 5.5
-        ci_size <- 1.6
-        
-        # plot
         p1 <-
-            ggplot(df) +
+            ggplot(df_sd) +
+            # plotting the tolerance interval
+            geom_rect(aes(xmin = tolerance[1], xmax = tolerance[2], ymin = -Inf, ymax = Inf), fill = "grey64", alpha = 0.01) +
             # plotting the mean of the sample
-            geom_vline(xintercept = mu_data, linetype = 2, color = "#e7298a") +
+            geom_vline(xintercept = mu_data, linetype = 2, size = 1, color = "#e7298a") +
             # plotting the data
             geom_point(
                 data = df_sd, aes(x, y = 0),
@@ -127,33 +104,24 @@ shinyServer(function(input, output) {
                 data = df_sd, aes(x = x), inherit.aes = FALSE,
                 alpha = 0.3, color = "#e7298a", fill = "#e7298a"
             ) +
-            # plotting the theory tolerance
+            # plotting the theory tolerance (interval)
             geom_errorbarh(
                 data = df_tolerance,
                 aes(xmin = xmin, xmax = xmax, y = y), inherit.aes = FALSE,
-                height = 0.01, size = 1#, size = ci_size#, color = "#d95f02"
+                height = 0.01, size = 1
             ) +
             # setting the x-axis as the spielraum
-            coord_cartesian(xlim = spielraum, ylim = c(0, 4 * fc) ) +
+            coord_cartesian(xlim = spielraum, ylim = c(0, 2 * fc) ) +
             scale_x_continuous(expand = c(0, 0) ) +
             xlab(NULL) + ylab(NULL) +
             # plotting the corroboraiton index
             ggtitle(paste0("Corroboration Index = ", round(ci, 3) ) ) +
             # aesthetics
+            theme_grey(base_size = 16) +
             theme(
                 panel.grid = element_blank(),
-                text = element_text(size = 16),
-                axis.title = element_text(size = 16),
                 axis.text.y = element_blank(),
-                axis.ticks.y = element_blank(),
-                panel.background = element_rect(fill = "grey94"),
-                axis.title.x = element_text(margin = margin(.3, 0, 0, 0, unit = 'cm') ),
-                legend.title = element_blank(),
-                legend.justification = c(0, 1),
-                legend.box.spacing = unit(1.2, "pt"),
-                legend.text = element_text(size = 16, face = "bold"),
-                legend.background = element_blank(),
-                plot.margin = unit(c(5.5, 65.5, 5.5, 5.5), "pt")
+                axis.ticks.y = element_blank()
                 )
         
         # allow plotting outside main plot region
