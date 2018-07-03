@@ -1,28 +1,32 @@
+library(shinythemes)
 library(shiny)
 
 # Define UI
 shinyUI(
     fluidPage(
         
+        # theme
+        theme = shinytheme("simplex"),
+        
         # title
         titlePanel("Computing the corroboration index of a theory"),
         h5("Based on Meehl (1990)"),
         
         # css styles
-        tags$head(
-            tags$style(HTML('p{font-size: 16px}')),
-            tags$style(HTML('li{font-size: 16px}')),
-            tags$style(HTML('#mu_prior{background-color: rgba(27, 158, 119, 0.5);
-                border-color: rgb(27, 158, 119)}')),
-            tags$style(HTML('#sd_prior{background-color: rgba(27, 158, 119, 0.5);
-                border-color: rgb(27, 158, 119)}')),
-            tags$style(HTML('#sample_data{color: white;
-                background-color: rgba(80, 80, 80, 0.8);
-                border-color: black; border-width: 1.5px}')),
-            tags$style(HTML('#likelihood{color: #d95f02; font-weight: bold}')),
-            tags$style(HTML('#data{color: #e7298a; font-weight: bold}')),
-            tags$style(HTML('#mean{color: #000000}'))
-            ),
+        # tags$head(
+        #     tags$style(HTML('p{font-size: 16px}')),
+        #     tags$style(HTML('li{font-size: 16px}')),
+        #     tags$style(HTML('#mu_prior{background-color: rgba(27, 158, 119, 0.5);
+        #         border-color: rgb(27, 158, 119)}')),
+        #     tags$style(HTML('#sd_prior{background-color: rgba(27, 158, 119, 0.5);
+        #         border-color: rgb(27, 158, 119)}')),
+        #     tags$style(HTML('#sample_data{color: white;
+        #         background-color: rgba(80, 80, 80, 0.8);
+        #         border-color: black; border-width: 1.5px}')),
+        #     tags$style(HTML('#likelihood{color: #d95f02; font-weight: bold}')),
+        #     tags$style(HTML('#data{color: #e7298a; font-weight: bold}')),
+        #     tags$style(HTML('#mean{color: #000000}'))
+        #     ),
         
         # layout
         sidebarLayout(
@@ -30,8 +34,8 @@ shinyUI(
             # side panel
             sidebarPanel(
                 width = 3,
-                sliderInput("tolerance", "tolerance", min = 0, max = 100, value = c(20, 40) ),
-                sliderInput("spielraum", "spielraum", min = 0, max = 100, value = c(0, 100) ),
+                sliderInput("tolerance", "Tolerance", min = -100, max = 100, value = c(20, 40) ),
+                sliderInput("spielraum", "Spielraum", min = -100, max = 100, value = c(0, 100) ),
                 br(),
                 numericInput("n", "Sample size", value = 20, step = 1, min = 10),
                 numericInput("mu_data", "Population mean", value = 60, step = 0.5),
@@ -50,7 +54,7 @@ shinyUI(
                 br(),
                 h4("Description"),
                 p("The app draws a sample of a random variable y from a Gaussian
-                    distribution, and illustrates how theory strength and predictive accuracy
+                    distribution, and illustrates how theory strength (tolerance) and predictive accuracy
                     jointly determine a corroboration index.")
                 )
             )

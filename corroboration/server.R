@@ -89,6 +89,8 @@ shinyServer(function(input, output) {
             ggplot(df_sd) +
             # plotting the tolerance interval
             geom_rect(aes(xmin = tolerance[1], xmax = tolerance[2], ymin = -Inf, ymax = Inf), fill = "grey64", alpha = 0.01) +
+            geom_vline(xintercept = tolerance[1], linetype = 3, size = 0.75, color = "grey64") +
+            geom_vline(xintercept = tolerance[2], linetype = 3, size = 0.75, color = "grey64") +
             # plotting the mean of the sample
             geom_vline(xintercept = mu_data, linetype = 2, size = 1, color = "#e7298a") +
             # plotting the data
@@ -100,21 +102,17 @@ shinyServer(function(input, output) {
                 data = df_sd, aes(x, y = 0),
                 shape = 1, stroke = 1.2, size = 4.2, alpha = 0.9, color = "#e7298a"
                 ) +
+            # plotting the density
             geom_density(
                 data = df_sd, aes(x = x), inherit.aes = FALSE,
-                alpha = 0.3, color = "#e7298a", fill = "#e7298a"
-            ) +
-            # plotting the theory tolerance (interval)
-            geom_errorbarh(
-                data = df_tolerance,
-                aes(xmin = xmin, xmax = xmax, y = y), inherit.aes = FALSE,
-                height = 0.01, size = 1
+                alpha = 0.3, color = "#e7298a", fill = "#e7298a", trim = TRUE
             ) +
             # setting the x-axis as the spielraum
             coord_cartesian(xlim = spielraum, ylim = c(0, 2 * fc) ) +
             scale_x_continuous(expand = c(0, 0) ) +
+            # axis labels
             xlab(NULL) + ylab(NULL) +
-            # plotting the corroboraiton index
+            # plotting the corroboraiton index as title
             ggtitle(paste0("Corroboration Index = ", round(ci, 3) ) ) +
             # aesthetics
             theme_grey(base_size = 16) +
