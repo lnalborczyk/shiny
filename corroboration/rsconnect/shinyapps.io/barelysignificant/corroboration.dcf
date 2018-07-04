@@ -5,6 +5,6 @@ account: barelysignificant
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 371258
-bundleId: 1462614
+bundleId: 1464987
 url: https://barelysignificant.shinyapps.io/corroboration/
-when: 1530623279.10776
+when: 1530729266.57703

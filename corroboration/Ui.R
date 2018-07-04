@@ -12,22 +12,6 @@ shinyUI(
         titlePanel("Computing the corroboration index of a theory"),
         h5("Based on Meehl (1990)"),
         
-        # css styles
-        # tags$head(
-        #     tags$style(HTML('p{font-size: 16px}')),
-        #     tags$style(HTML('li{font-size: 16px}')),
-        #     tags$style(HTML('#mu_prior{background-color: rgba(27, 158, 119, 0.5);
-        #         border-color: rgb(27, 158, 119)}')),
-        #     tags$style(HTML('#sd_prior{background-color: rgba(27, 158, 119, 0.5);
-        #         border-color: rgb(27, 158, 119)}')),
-        #     tags$style(HTML('#sample_data{color: white;
-        #         background-color: rgba(80, 80, 80, 0.8);
-        #         border-color: black; border-width: 1.5px}')),
-        #     tags$style(HTML('#likelihood{color: #d95f02; font-weight: bold}')),
-        #     tags$style(HTML('#data{color: #e7298a; font-weight: bold}')),
-        #     tags$style(HTML('#mean{color: #000000}'))
-        #     ),
-        
         # layout
         sidebarLayout(
             
@@ -54,8 +38,8 @@ shinyUI(
                 br(),
                 h4("Description"),
                 p("The app draws a sample of a random variable y from a Gaussian
-                    distribution, and illustrates how theory strength (tolerance) and predictive accuracy
-                    jointly determine a corroboration index.")
+                    distribution, and illustrates how theory strength (tolerance)
+                    and predictive accuracy jointly determine a corroboration index.")
                 )
             )
         )

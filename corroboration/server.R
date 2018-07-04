@@ -4,30 +4,20 @@ library(shiny)
 
 shinyServer(function(input, output) {
     
-    # react when user clicks "New Sample"
+    # react when user clicks on "new sample"
     data_sample <- eventReactive(c(input$sample_data), {
         
         y <- rnorm(input$n, input$mu_data, input$sd_data)
         
-        mu <- mean(y)
-        se <- sd(y) / sqrt(length(y) )
-        
-        dat_min <- min(y) - 0.2 * sd(y)
-        dat_max <- max(y) + 0.2 * sd(y)
-        
         return(list(y = y) )
         
         }, ignoreNULL = FALSE, ignoreInit = FALSE)
-    
-    # react when data_sample() changes (when user clicks 'New Sample')
-    true_mean <- eventReactive(data_sample(), {return(input$mu_data)} )
     
     # draw plot
     output$distPlot <- renderPlot({
         
         # get reactive data
         data_sample <- data_sample()
-        true_mean <- true_mean()
 
         # sample data
         y <- data_sample$y
@@ -40,27 +30,25 @@ shinyServer(function(input, output) {
         xmin <- spielraum[1]
         xmax <- spielraum[2]
         
-        # sample mean and standard error
+        # sample mean
         mu_data <- mean(y)
-        se_data <- sd(y) / sqrt(length(y) )
-        
-        # factor for positioning CIs, sample data, and pop mean
-        fc <- 0.12
-        df_sd <- data.frame(x = y, y = -2 * fc)
+
+        # sample data
+        df_sd <- data.frame(x = y, y = 0)
 
         # creating a dataframe for subsequent plotting
-        df_tolerance <- data.frame(xmin = tolerance[1], xmax = tolerance[2], y = fc)
+        df_tolerance <- data.frame(xmin = tolerance[1], xmax = tolerance[2], y = 0)
         
-        ########################################################################
+        ###################################################################
         # computing the corroboration index
         ######################################################
         
         spiel <- max(spielraum) - min(spielraum) # width of spielraum
         interval <- max(tolerance) - min(tolerance) # width of tolerance
         
-        relinterval <- interval / spiel # theory tolerance
+        relinterval <- interval / spiel # theory relative tolerance
         
-        intolerance <- 1 - relinterval # theory intolerance
+        intolerance <- 1 - relinterval # theory relative intolerance
         
         if (mu_data < tolerance[2] & mu_data > tolerance[1]) {
             
@@ -81,19 +69,27 @@ shinyServer(function(input, output) {
         
         ci <- closeness * intolerance # corroboration index
         
-        #############################################
+        #######################################
         # plotting
         ###########################
         
         p1 <-
             ggplot(df_sd) +
             # plotting the tolerance interval
-            geom_rect(aes(xmin = tolerance[1], xmax = tolerance[2], ymin = -Inf, ymax = Inf), fill = "grey64", alpha = 0.01) +
+            geom_rect(
+                aes(xmin = tolerance[1], xmax = tolerance[2], ymin = -Inf, ymax = Inf),
+                fill = "grey64", alpha = 0.01
+                ) +
             geom_vline(xintercept = tolerance[1], linetype = 3, size = 0.75, color = "grey64") +
             geom_vline(xintercept = tolerance[2], linetype = 3, size = 0.75, color = "grey64") +
             # plotting the mean of the sample
-            geom_vline(xintercept = mu_data, linetype = 2, size = 1, color = "#e7298a") +
+            geom_vline(xintercept = mu_data, linetype = 2, size = 0.5, color = "#e7298a") +
             # plotting the data
+            # geom_dotplot(
+            #     data = df_sd, aes(x, y = 0),
+            #     method = "histodot",
+            #     color = "#e7298a", fill = "#e7298a"
+            #     ) +
             geom_point(
                 data = df_sd, aes(x, y = 0),
                 size = 4.2, stroke = 0, alpha = 0.4, color = "#e7298a"
@@ -104,15 +100,14 @@ shinyServer(function(input, output) {
                 ) +
             # plotting the density
             geom_density(
-                data = df_sd, aes(x = x), inherit.aes = FALSE,
-                alpha = 0.3, color = "#e7298a", fill = "#e7298a", trim = TRUE
+                data = df_sd, aes(x = x),
+                alpha = 0.25, color = "#e7298a", fill = "#e7298a", trim = TRUE
             ) +
             # setting the x-axis as the spielraum
-            coord_cartesian(xlim = spielraum, ylim = c(0, 2 * fc) ) +
-            scale_x_continuous(expand = c(0, 0) ) +
+            coord_cartesian(xlim = spielraum) +
             # axis labels
             xlab(NULL) + ylab(NULL) +
-            # plotting the corroboraiton index as title
+            # plotting the corroboration index as title
             ggtitle(paste0("Corroboration Index = ", round(ci, 3) ) ) +
             # aesthetics
             theme_grey(base_size = 16) +
