@@ -37,7 +37,7 @@ shinyUI(
                 # description
                 br(),
                 h4("Description"),
-                p("The app draws a sample of a random variable y from a Gaussian
+                p("The app draws a sample of a random variable from a Gaussian
                     distribution, and illustrates how theory strength (tolerance)
                     and predictive accuracy jointly determine a corroboration index.")
                 )
