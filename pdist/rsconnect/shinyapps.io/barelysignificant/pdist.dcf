@@ -4,6 +4,6 @@ account: barelysignificant
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 135720
-bundleId: 1238180
+bundleId: 1819976
 url: https://barelysignificant.shinyapps.io/pdist/
-when: 1519492128.21135
+when: 1547733791.04658

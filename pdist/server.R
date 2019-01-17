@@ -23,14 +23,21 @@ function(input, output, session) {
       
       empirical_power <- (sum(p < alpha) / nSims)
       
-      if (cohensd == 0) {empirical_power <- 0} # if H0, then power = 0
+      # if H0, then power = 0
+      if (cohensd == 0) {empirical_power <- 0}
       
-      data.frame(p = p) %>%
-          ggplot(aes(x = p) ) +
-          stat_density(fill = "grey60") +
-          geom_vline(xintercept = alpha, size = 0.7, linetype = 3) +
+      # optimal number of bins
+      nbins <- diff(range(p) ) / (2 * IQR(p) / length(p)^(1 / 3) )
+      
+      p %>%
+          qplot(bins = nbins) +
+          geom_vline(xintercept = alpha, size = 1, linetype = 2) +
           labs(x = "p-value", y = "") +
-          theme_bw(base_size = 14, base_family = "Verdana") +
+          theme_minimal(base_size = 14, base_family = "Verdana") +
+          theme(
+              axis.text.y = element_blank(),
+              axis.ticks.y = element_blank()
+              ) +
           ggtitle(
               paste0(
                   "p-value distribution for d = ", cohensd, " and n = ", n,
